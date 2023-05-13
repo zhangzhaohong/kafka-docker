@@ -11,6 +11,9 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_SERVER_ID: 1
       ZOOKEEPER_SERVERS: zookeeper:2888:3888
+      KAFKA_OPTS: -Djava.security.auth.login.config=/etc/kafka/secrets/zookeeper_jaas.conf
+    volumes:
+      - ./secrets:/etc/kafka/secrets
 
   kafka:
     image: confluentinc/cp-kafka:7.4.0
@@ -22,7 +25,7 @@ services:
       - "55011:29092"
     environment:
       KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:19092,EXTERNAL://192.168.2.250:55009,DOCKER://host.docker.internal:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:SASL_PLAINTEXT,EXTERNAL:SASL_PLAINTEXT,DOCKER:SASL_PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_BROKER_ID: 1
@@ -34,8 +37,12 @@ services:
       KAFKA_JMX_HOSTNAME: 192.168.2.250
       KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
       KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
+      KAFKA_SUPER_USERS: User:admin
+      KAFKA_OPTS: -Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf
     depends_on:
       - zookeeper
+    volumes:
+      - ./secrets:/etc/kafka/secrets
 
   kafka-manager:
     image: hlebalbau/kafka-manager:latest
