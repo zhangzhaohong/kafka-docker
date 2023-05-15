@@ -214,3 +214,15 @@ Add this environment variable
 ```
 KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE=false
 ```
+
+## fix server
+➜ docker exec -it zookeeper bash
+root@98747a9eac65:/zookeeper-3.4.14# ./bin/zkCli.sh
+[zk: localhost:2181(CONNECTED) 2] ls /kafka-manager
+[configs, deleteClusters, clusters]
+[zk: localhost:2181(CONNECTED) 3] create /kafka-manager/mutex ""
+Created /kafka-manager/mutex
+[zk: localhost:2181(CONNECTED) 5] create /kafka-manager/mutex/locks ""
+Created /kafka-manager/mutex/locks
+[zk: localhost:2181(CONNECTED) 6] create /kafka-manager/mutex/leases ""
+Created /kafka-manager/mutex/leases
