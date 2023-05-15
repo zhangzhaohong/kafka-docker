@@ -10,6 +10,7 @@ services:
     image: wurstmeister/kafka
     depends_on: [ zookeeper ]
     container_name: kafka-server
+    restart: always
     ports:
       - "55009:9092"
       - "55010:9999"
