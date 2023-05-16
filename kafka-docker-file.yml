@@ -1,13 +1,23 @@
 version: '3.8'
 services:
   zookeeper:
-    image: wurstmeister/zookeeper
+    image: wurstmeister/zookeeper:latest
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     container_name: zookeeper-server
     ports:
       - "55008:2181"
     restart: always
   kafka:
-    image: wurstmeister/kafka
+    image: wurstmeister/kafka:latest
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     depends_on: [ zookeeper ]
     container_name: kafka-server
     restart: always
@@ -25,6 +35,11 @@ services:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
   kafka-manager:
     image: hlebalbau/kafka-manager:latest
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     container_name: kafka-manager-server
     restart: always
     ports:
