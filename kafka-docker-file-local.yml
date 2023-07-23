@@ -1,22 +1,23 @@
 version: '3.8'
-# replace 192.168.1.1 to real server ip
 services:
   zookeeper:
     image: wurstmeister/zookeeper:latest
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     container_name: zookeeper-server
     ports:
       - "55008:2181"
     restart: always
-    volumes:
-      - /data/docker/kafka/zookeeper/data:/opt/zookeeper-3.4.13/data
-      - /etc/localtime:/etc/localtime
-    deploy:
-      resources:
-        limits:
-          memory: 14G
-          cpus: "8.00"
   kafka:
     image: wurstmeister/kafka:latest
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     depends_on: [ zookeeper ]
     container_name: kafka-server
     restart: always
@@ -24,24 +25,21 @@ services:
       - "55009:9092"
       - "55010:9999"
     environment:
-      HOSTNAME: 192.168.1.1
+      HOSTNAME: 192.168.2.250
       KAFKA_BROKER_ID: 0
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.1.1:55009
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.2.250:55009
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_JMX_PORT: 55010
-      KAFKA_JMX_HOSTNAME: 192.168.1.1
+      KAFKA_JMX_HOSTNAME: 192.168.2.250
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
-    volumes:
-      - /data/docker/kafka/logs:/opt/kafka/logs
-      - /etc/localtime:/etc/localtime
-    deploy:
-      resources:
-        limits:
-          memory: 14G
-          cpus: "8.00"
   kafka-manager:
     image: hlebalbau/kafka-manager:latest
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     container_name: kafka-manager-server
     restart: always
     ports:
@@ -53,10 +51,3 @@ services:
       ZK_HOSTS: zookeeper:2181
       # APPLICATION_SECRET: superadmin
       KM_ARGS: -Djava.net.preferIPv4Stack=true
-    volumes:
-      - /etc/localtime:/etc/localtime
-    deploy:
-      resources:
-        limits:
-          memory: 14G
-          cpus: "8.00"
